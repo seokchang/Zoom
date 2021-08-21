@@ -32,6 +32,6 @@ wss.on("connection", (socket) => {
 		sockets.forEach(aSocket => { aSocket.send(message.toString()) });
 	});
 	// Post Message to FE
-	socket.send("Socket Data!!");
+	// socket.send("Socket Data!!");
 });
 server.listen(3000, handleListen);
