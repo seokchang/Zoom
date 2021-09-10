@@ -1,5 +1,7 @@
 // Front Socket Object
 const socket = io();
+// Room List
+const roomList = document.getElementById("roomList");
 // Enter Room Form
 const welcome = document.getElementById("welcome");
 const welcomeForm = welcome.querySelector("form");
@@ -48,9 +50,13 @@ function openNickNameForm() {
 }
 
 // Set Room Title
-function showRoomTitle() {
+function showRoomTitle(userCount) {
 	const h3 = message.querySelector("h3");
-	h3.innerText = `Room ${roomName}`;
+	if (userCount === undefined) {
+		h3.innerText = `Room ${roomName}`;
+		return;
+	}
+	h3.innerText = `Room ${roomName} (${userCount})`;
 }
 
 // Send Message
@@ -79,12 +85,28 @@ welcomeForm.addEventListener("submit", (event) => {
 nicknameForm.addEventListener("submit", handleNickNameSubmit);
 messageForm.addEventListener("submit", handleMessageSubmit);
 
-socket.on("welcome", (user) => {
+// Enter Room
+socket.on("welcome", (user, userCount) => {
 	addMessage(`${user} joined!!`);
+	showRoomTitle(userCount);
 });
-
-socket.on("bye", (user) => {
+// Left Room
+socket.on("bye", (user, userCount) => {
 	addMessage(`${user} left!!`);
+	showRoomTitle(userCount);
 });
-
+// Update Room List
+socket.on("room_change", (rooms) => {
+	const list = roomList.querySelector("ul");
+	list.innerHTML = "";
+	if (rooms.length === 0) {
+		return;
+	}
+	rooms.forEach((room) => {
+		const li = document.createElement("li");
+		li.innerText = room;
+		list.append(li);
+	});
+});
+// Send Message
 socket.on("new_message", addMessage);
