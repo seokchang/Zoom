@@ -76,6 +76,12 @@ wsServer.on("connection", (socket) => {
 		socket.to(room).emit("new_message", `${socket.nickname} : ${msg}`);
 		callback();
 	});
+	// Enter Video Room
+	socket.on("enter_video_room", (roomName, callback) => {
+		socket.join(roomName);
+		callback();
+		socket.to(roomName).emit("join_video_room");
+	});
 });
 
 //#region  WebSocket

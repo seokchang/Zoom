@@ -15,17 +15,28 @@ html(lang="en")
 				ul 
 			div#welcome 
 				form
-					input(placeholder="Room Name", required, type="text")
-					button Enter Room 				
+					input(type="text", placeholder="Chatting Room Name", required)
+					button Enter Chatting Room 
 			div#nickname 
 				form
-					input(placeholder="NickName", required, type="text")
+					input(type="text", placeholder="NickName", required)
 					button Save 
 			div#message
 				h3 
 				ul 
 				form
-					input(placeholder="Message", required, type="text")
+					input(type="text", placeholder="Message", required)
 					button Send 
+			hr
+			div#videoArea
+				form
+					input(type="text", placeholder="Video Room Name", required) 
+					button Enter Video Room
+			div#videoCall
+				div#videoStream
+					video#myVideo(autoplay, playsinline, width="400" height="400")
+					button#mute Muted 
+					button#camera Turn Camera Off
+					select#cameras
 		script(src="/socket.io/socket.io.js") 
 		script(src="/public/js/app.js")
