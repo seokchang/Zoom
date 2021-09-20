@@ -77,10 +77,15 @@ wsServer.on("connection", (socket) => {
 		callback();
 	});
 	// Enter Video Room
-	socket.on("enter_video_room", (roomName, callback) => {
+	socket.on("enter_video_room", (roomName) => {
 		socket.join(roomName);
-		callback();
 		socket.to(roomName).emit("join_video_room");
+	});
+	socket.on("offer", (offer, roomName) => {
+		socket.to(roomName).emit("offer", offer);
+	});
+	socket.on("answer", (answer, roomName) => {
+		socket.to(roomName).emit("answer", answer);
 	});
 });
 

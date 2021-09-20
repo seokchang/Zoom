@@ -5,7 +5,13 @@ html(lang="en")
 		meta(http-equiv="X-UA-Compatible", content="IE=edge")
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
 		title Noom 
+		//- CSS scripts
 		link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+		
+		//- JS scripts
+		script(defer src="/socket.io/socket.io.js")
+		script(defer src="/public/js/app.js")
+		script(defer src="/public/js/video.js")
 	body 
 		header
 			h1 Noom 
@@ -38,7 +44,3 @@ html(lang="en")
 					button#mute Muted 
 					button#camera Turn Camera Off
 					select#cameras
-		
-		script(src="/socket.io/socket.io.js") 
-		script(src="/public/js/app.js")
-		script(src="/public/js/video.js") 

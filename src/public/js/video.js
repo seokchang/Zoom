@@ -15,27 +15,57 @@ let stream;
 let isMuted = false;
 let isCameraOff = false;
 let videoRoomName;
+let peerConnection;
 
 videoCall.hidden = true;
 
-function startMedia() {
+async function initMedia() {
 	videoArea.hidden = true;
 	videoCall.hidden = false;
-	getMedia();
+	await getMedia();
+	makeConnection();
 }
 
-videoAreaForm.addEventListener("submit", (event) => {
+// WebRTC
+// make connection Peer to Peer
+function makeConnection() {
+	peerConnection = new RTCPeerConnection();
+	/**
+	 * addTrack(track, stream)
+	 * 다른 유저에게 전송될 트랙들의 묶음에 신규 미디어 트랙을 추가
+	 */
+	stream.getTracks().forEach((track) => { peerConnection.addTrack(track, stream) });
+}
+
+videoAreaForm.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const input = videoAreaForm.querySelector("input");
 
-	socket.emit("enter_video_room", input.value, startMedia);
+	await initMedia();
+	socket.emit("enter_video_room", input.value);
 	videoRoomName = input.value;
 	input.value = "";
 });
 
-socket.on("join_video_room", () => {
-	console.log("Someone join room");
+//#region WebRTC Socket Events
+socket.on("join_video_room", async () => {
+	const offer = await peerConnection.createOffer();
+	peerConnection.setLocalDescription(offer);
+	socket.emit("offer", offer, videoRoomName);
 });
+
+socket.on("offer", async (offer) => {
+	peerConnection.setRemoteDescription(offer);
+	const answer = peerConnection.createAnswer();
+
+	peerConnection.setLocalDescription(answer);
+	socket.emit("answer", answer, videoRoomName);
+});
+
+socket.on("answer", (answer) => {
+	peerConnection.setRemoteDescription(answer);
+});
+//#endregion
 
 async function getCameras() {
 	try {
